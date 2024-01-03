@@ -22,7 +22,7 @@ ENV PATH="/opt/clang/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/clang/lib:/opt/qt6/lib"
 ENV LANG="C.UTF-8"
 
-RUN export CMAKE_VERSION="3.27.9" && \
+RUN export CMAKE_VERSION="3.28.1" && \
     wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
     tar -xvpf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
@@ -315,7 +315,7 @@ RUN export APPIMAGEKIT_VERSION="13" && \
     chmod -R 755 /opt/appimagetool && \
     ln -s /opt/appimagetool/AppRun /usr/local/bin/appimagetool )
 
-RUN export LINUXDEPLOYQT_COMMIT="76139350c9ff4230d7a3846403735b534210cb2b" && \
+RUN export LINUXDEPLOYQT_COMMIT="2b38449ca9e9c68ad53e28531c017910ead6ebc4" && \
     git -c http.sslVerify=false clone https://github.com/probonopd/linuxdeployqt.git linuxdeployqt && \
     cd linuxdeployqt && \
     git checkout -f ${LINUXDEPLOYQT_COMMIT} && \
