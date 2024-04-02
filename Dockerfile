@@ -22,7 +22,7 @@ ENV PATH="/opt/clang/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/clang/lib:/opt/qt6/lib"
 ENV LANG="C.UTF-8"
 
-RUN export CMAKE_VERSION="3.28.1" && \
+RUN export CMAKE_VERSION="3.29.0" && \
     wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
     tar -xvpf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
@@ -48,11 +48,11 @@ RUN export NINJA_VERSION="1.11.1" && \
     cd .. && \
     rm -rf v${NINJA_VERSION}.tar.gz ninja-${NINJA_VERSION}
 
-RUN export CLANG_VERSION="17.0.6" && \
+RUN export CLANG_VERSION="18.1.2" && \
     wget --no-check-certificate https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${CLANG_VERSION}.tar.gz && \
     tar -xvpf llvmorg-${CLANG_VERSION}.tar.gz && \
     cd llvm-project-llvmorg-${CLANG_VERSION} && \
-    sed -i 's|^\(unsigned ToolChain::GetDefaultDwarfVersion() const {\)|\1\n  return 4;|' clang/lib/Driver/ToolChain.cpp && \
+    sed -i 's|\(virtual unsigned GetDefaultDwarfVersion() const { return \)5;|\14;|' clang/include/clang/Driver/ToolChain.h && \
     cmake -S llvm -B build \
         -G "Ninja" \
         -DCMAKE_BUILD_TYPE=Release \
@@ -84,7 +84,7 @@ RUN export CLANG_VERSION="17.0.6" && \
     rm -rf llvmorg-${CLANG_VERSION}.tar.gz llvm-project-llvmorg-${CLANG_VERSION}
 
 RUN export XCB_PROTO_VERSION="1.16.0" && \
-    export LIBXCB_VERSION="1.16" && \
+    export LIBXCB_VERSION="1.16.1" && \
     export XCB_UTIL_VERSION="0.4.1" && \
     export XCB_UTIL_IMAGE_VERSION="0.4.1" && \
     export XCB_UTIL_KEYSYMS_VERSION="0.4.1" && \
@@ -158,7 +158,7 @@ RUN export XCB_PROTO_VERSION="1.16.0" && \
     cd .. && \
     rm -rf xcb-proto-${XCB_PROTO_VERSION}.tar.xz xcb-proto-${XCB_PROTO_VERSION} libxcb-${LIBXCB_VERSION}.tar.xz libxcb-${LIBXCB_VERSION} xcb-util-${XCB_UTIL_VERSION}.tar.xz xcb-util-${XCB_UTIL_VERSION} xcb-util-image-${XCB_UTIL_IMAGE_VERSION}.tar.xz xcb-util-image-${XCB_UTIL_IMAGE_VERSION} xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION}.tar.xz xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION} xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION}.tar.xz xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION} xcb-util-wm-${XCB_UTIL_WM_VERSION}.tar.xz xcb-util-wm-${XCB_UTIL_WM_VERSION} xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION}.tar.xz xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION} xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}.tar.xz xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}
 
-RUN export OPENSSL_VERSION="3.2.0" && \
+RUN export OPENSSL_VERSION="3.2.1" && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
     tar -xvpf openssl-${OPENSSL_VERSION}.tar.gz && \
     cd openssl-${OPENSSL_VERSION} && \
@@ -169,7 +169,7 @@ RUN export OPENSSL_VERSION="3.2.0" && \
     cd .. && \
     rm -rf openssl-${OPENSSL_VERSION}.tar.gz openssl-${OPENSSL_VERSION}
 
-RUN export QT_VERSION="6.5.3" && \
+RUN export QT_VERSION="6.6.3" && \
     export GHCFS_VERSION="1.5.14" && \
     wget --no-check-certificate --tries=1 https://download.qt.io/archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz || \
     wget --no-check-certificate --tries=1 https://qt-mirror.dannhauer.de/archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz || \
@@ -180,12 +180,8 @@ RUN export QT_VERSION="6.5.3" && \
     wget --no-check-certificate https://github.com/gulrak/filesystem/releases/download/v${GHCFS_VERSION}/filesystem.hpp -O qtbase/src/tools/syncqt/filesystem.hpp && \
     sed -i 's|std::filesystem|ghc::filesystem|g ; s|<filesystem>|"filesystem.hpp"|' qtbase/src/tools/syncqt/main.cpp && \
     echo 'target_link_libraries(XcbQpaPrivate PRIVATE XCB::UTIL -lXau -lXdmcp)' >> qtbase/src/plugins/platforms/xcb/CMakeLists.txt && \
-    cd qtbase && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/4cffb3b5fbbad24fed26690c3e10c0332cb0b33f.diff -O - | patch -p1 && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/a608a7c29886fd95ea8569776036673e6c7639f2.diff -O - | patch -p1 && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/756857b5d05fe85ea93851111fafc430944dbe61.diff -O - | patch -p1 && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/fd09519bbd4e7ea89b898c7496e7e06980ee9672.diff -O - | patch -p1 && \
-    cd .. && \
+    echo 'target_link_libraries(Network PRIVATE ${CMAKE_DL_LIBS})' >> qtbase/src/network/CMakeLists.txt && \
+    sed -i 's|\(#ifdef Q_OS_VXWORKS\)|#if 1 //\1|' qtbase/src/corelib/global/qxpfunctional.h && \
     mkdir build && \
     cd build && \
     ../configure -prefix /opt/qt6 -opensource -confirm-license \
@@ -204,7 +200,7 @@ RUN export QT_VERSION="6.5.3" && \
         -qt-tiff -qt-webp \
         -pulseaudio -gstreamer yes \
         -- -Wno-dev -DOpenGL_GL_PREFERENCE=LEGACY \
-        -DQT_FEATURE_optimize_full=ON -DQT_FEATURE_clangcpp=OFF -DQT_FEATURE_clang=OFF \
+        -DQT_FEATURE_optimize_full=ON -DQT_FEATURE_clangcpp=OFF -DQT_FEATURE_clang=OFF -DQT_FEATURE_ffmpeg=OFF \
         -DCMAKE_PREFIX_PATH="/opt/openssl;/opt/xcb" -DQT_FEATURE_openssl_linked=ON -DQT_FEATURE_xkbcommon_x11=ON -DTEST_xcb_syslibs=ON \
         && \
     cmake --build . --parallel && \
@@ -276,7 +272,7 @@ RUN export QGNOMEPLATFORM_VERSION="0.9.2" && \
     cd .. && \
     rm -rf ${QGNOMEPLATFORM_VERSION}.tar.gz QGnomePlatform-${QGNOMEPLATFORM_VERSION}
 
-RUN export QADWAITA_DECORATIONS_COMMIT="27d2899758f19abeb90fcb517aa2bfe8766576f4" && \
+RUN export QADWAITA_DECORATIONS_COMMIT="8f7357cf57b46216160cd3dc1f09f02a05fed172" && \
     wget --no-check-certificate https://github.com/FedoraQt/QAdwaitaDecorations/archive/${QADWAITA_DECORATIONS_COMMIT}.tar.gz && \
     tar -xvpf ${QADWAITA_DECORATIONS_COMMIT}.tar.gz && \
     cd QAdwaitaDecorations-${QADWAITA_DECORATIONS_COMMIT} && \
