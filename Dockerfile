@@ -175,29 +175,25 @@ RUN export OPENSSL_VERSION="3.3.1" && \
     cd .. && \
     rm -rf openssl-${OPENSSL_VERSION}.tar.gz openssl-${OPENSSL_VERSION} openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz debian
 
-RUN export QT_VERSION="6.7.2" && \
+RUN export QT_VERSION="6.8.0-beta3" && \
     export GHCFS_COMMIT="b1982f06c84f08a99fb90bac43c2d03712efe921" && \
-    wget --no-check-certificate --tries=1 https://download.qt.io/archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz || \
-    wget --no-check-certificate --tries=1 https://qt-mirror.dannhauer.de/archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz || \
-    wget --no-check-certificate --tries=1 https://mirror.accum.se/mirror/qt.io/qtproject/archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz || \
-    wget --no-check-certificate --tries=1 https://www.nic.funet.fi/pub/mirrors/download.qt-project.org/archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz && \
+    export QT_ARCHIVE_PATH="development_releases/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/src/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
+    wget --no-check-certificate --tries=1 "https://download.qt.io/${QT_ARCHIVE_PATH}" || \
+    wget --no-check-certificate --tries=1 "https://qt-mirror.dannhauer.de/${QT_ARCHIVE_PATH}" || \
+    wget --no-check-certificate --tries=1 "https://mirror.accum.se/mirror/qt.io/qtproject/${QT_ARCHIVE_PATH}" || \
+    wget --no-check-certificate --tries=1 "https://www.nic.funet.fi/pub/mirrors/download.qt-project.org/${QT_ARCHIVE_PATH}" || \
+    wget --no-check-certificate "https://web.archive.org/web/20240825194652/https://download.qt.io/${QT_ARCHIVE_PATH}" && \
     tar -xvpf qt-everywhere-src-${QT_VERSION}.tar.xz && \
     cd qt-everywhere-src-${QT_VERSION} && \
     wget --no-check-certificate https://raw.githubusercontent.com/gulrak/filesystem/${GHCFS_COMMIT}/include/ghc/filesystem.hpp -O qtbase/src/tools/syncqt/filesystem.hpp && \
     sed -i 's|std::filesystem|ghc::filesystem|g ; s|<filesystem>|"filesystem.hpp"|' qtbase/src/tools/syncqt/main.cpp && \
+    sed -i 's|#if \(defined DISABLE_STD_FILESYSTEM\)|#if 1 //\1|' qtquick3d/src/3rdparty/openxr/src/common/filesystem_utils.cpp && \
     echo 'target_link_libraries(XcbQpaPrivate PRIVATE XCB::UTIL -lXau -lXdmcp)' >> qtbase/src/plugins/platforms/xcb/CMakeLists.txt && \
     echo 'target_link_libraries(Network PRIVATE ${CMAKE_DL_LIBS})' >> qtbase/src/network/CMakeLists.txt && \
     sed -i 's|\(#ifdef Q_OS_VXWORKS\)|#if 1 //\1|' qtbase/src/corelib/global/qxpfunctional.h && \
     sed -i 's|\(#include FT_MULTIPLE_MASTERS_H\)|\1\n#if (FREETYPE_MAJOR*10000 + FREETYPE_MINOR*100 + FREETYPE_PATCH) < 20900\nstatic inline FT_Error FT_Done_MM_Var(FT_Library library, FT_MM_Var* amaster) {\n    if (!library)\n        return FT_Err_Invalid_Library_Handle;\n    FT_Memory memory = *((FT_Memory*)library);\n    memory->free(memory, amaster);\n    return FT_Err_Ok;\n}\n#endif|' qtbase/src/gui/text/freetype/qfontengine_ft_p.h && \
     sed -i 's|VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT|VK_COLOR_SPACE_DCI_P3_LINEAR_EXT|g' qtbase/src/gui/rhi/qrhivulkan.cpp && \
     sed -i 's|\(pa_context_errno(\)\(context\)|\1const_cast<pa_context *>(\2)| ; s|\(pa_stream_get_context(\)\(stream\)|\1const_cast<pa_stream *>(\2)|' qtmultimedia/src/multimedia/pulseaudio/qpulsehelpers.cpp && \
-    cd qtbase && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/35128e2f1dde084547d817fb5c33cec235d4f5d5.diff -O - | patch -p1 && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/d991cc703ba185943315bc405a99f9db2441d398.diff -O - | patch -p1 && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/a2aa1f81a818eddd597cbcd648adf8a89e8c9fa8.diff -O - | patch -p1 && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/ed093e7761faa7823939e77c67961d03f8b785c6.diff -O - | patch -p1 && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/05f0c6ca0b3ab83d0a50f9589d0ae3eb3b320961.diff -O - | patch -p1 && \
-    cd .. && \
     mkdir build && \
     cd build && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" ../configure -prefix /opt/qt6 -opensource -confirm-license \
@@ -224,7 +220,7 @@ RUN export QT_VERSION="6.7.2" && \
     cd ../.. && \
     rm -rf qt-everywhere-src-${QT_VERSION}.tar.xz qt-everywhere-src-${QT_VERSION}
 
-RUN export QT6GTK2_COMMIT="d29ba6c1fb4ac933ed7b91f0480cbd0c5a975ab8" && \
+RUN export QT6GTK2_COMMIT="b574ba5b59edf5ce220ca304e1d07d75c94d03a2" && \
     wget --no-check-certificate https://github.com/trialuser02/qt6gtk2/archive/${QT6GTK2_COMMIT}.tar.gz && \
     tar -xvpf ${QT6GTK2_COMMIT}.tar.gz && \
     cd qt6gtk2-${QT6GTK2_COMMIT} && \
@@ -268,10 +264,10 @@ RUN export ADWAITA_QT_COMMIT="0a774368916def5c9889de50f3323dec11de781e" && \
     cd .. && \
     rm -rf ${ADWAITA_QT_COMMIT}.tar.gz adwaita-qt-${ADWAITA_QT_COMMIT}
 
-RUN export QGNOMEPLATFORM_VERSION="0.9.2" && \
-    wget --no-check-certificate https://github.com/FedoraQt/QGnomePlatform/archive/refs/tags/${QGNOMEPLATFORM_VERSION}.tar.gz && \
-    tar -xvpf ${QGNOMEPLATFORM_VERSION}.tar.gz && \
-    cd QGnomePlatform-${QGNOMEPLATFORM_VERSION} && \
+RUN export QGNOMEPLATFORM_COMMIT="d86d6baab74c3e69094083715ffef4aef2e516dd" && \
+    wget --no-check-certificate https://github.com/FedoraQt/QGnomePlatform/archive/${QGNOMEPLATFORM_COMMIT}.tar.gz && \
+    tar -xvpf ${QGNOMEPLATFORM_COMMIT}.tar.gz && \
+    cd QGnomePlatform-${QGNOMEPLATFORM_COMMIT} && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" cmake -S . -B build \
         -G "Ninja" \
         -DCMAKE_BUILD_TYPE=Release \
@@ -286,7 +282,7 @@ RUN export QGNOMEPLATFORM_VERSION="0.9.2" && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" cmake --build build --target all && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" cmake --install build && \
     cd .. && \
-    rm -rf ${QGNOMEPLATFORM_VERSION}.tar.gz QGnomePlatform-${QGNOMEPLATFORM_VERSION}
+    rm -rf ${QGNOMEPLATFORM_COMMIT}.tar.gz QGnomePlatform-${QGNOMEPLATFORM_COMMIT}
 
 RUN export QADWAITA_DECORATIONS_COMMIT="f40f31dadc074bd989db6dd90e52eecf33c4567b" && \
     wget --no-check-certificate https://github.com/FedoraQt/QAdwaitaDecorations/archive/${QADWAITA_DECORATIONS_COMMIT}.tar.gz && \
@@ -327,12 +323,11 @@ RUN export APPIMAGEKIT_VERSION="13" && \
     chmod -R 755 /opt/appimagetool && \
     ln -s /opt/appimagetool/AppRun /usr/local/bin/appimagetool )
 
-RUN export LINUXDEPLOYQT_COMMIT="ea89a1fca90d9de022f9d2ca239a5400b9209392" && \
+RUN export LINUXDEPLOYQT_COMMIT="8cb94384a8a8c1cabd573e117189708e8e472b22" && \
     git -c http.sslVerify=false clone https://github.com/probonopd/linuxdeployqt.git linuxdeployqt && \
     cd linuxdeployqt && \
     git checkout -f ${LINUXDEPLOYQT_COMMIT} && \
     git clean -dfx && \
-    sed -i 's|^\(find_package(QT NAMES.*\)$|\1\nfind_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)|' tools/linuxdeployqt/CMakeLists.txt && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" cmake -S . -B build \
         -G "Ninja" \
         -DCMAKE_BUILD_TYPE=Release \
