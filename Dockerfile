@@ -217,14 +217,13 @@ RUN export OPENSSL_VERSION="3.3.2" && \
     cd .. && \
     rm -rf openssl-${OPENSSL_VERSION}.tar.gz openssl-${OPENSSL_VERSION} openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz debian
 
-RUN export QT_VERSION="6.8.0-rc" && \
+RUN export QT_VERSION="6.8.0" && \
     export GHCFS_COMMIT="b1982f06c84f08a99fb90bac43c2d03712efe921" && \
-    export QT_ARCHIVE_PATH="development_releases/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/src/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
+    export QT_ARCHIVE_PATH="archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
     wget --no-check-certificate --tries=1 "https://download.qt.io/${QT_ARCHIVE_PATH}" || \
     wget --no-check-certificate --tries=1 "https://qt-mirror.dannhauer.de/${QT_ARCHIVE_PATH}" || \
     wget --no-check-certificate --tries=1 "https://mirror.accum.se/mirror/qt.io/qtproject/${QT_ARCHIVE_PATH}" || \
-    wget --no-check-certificate --tries=1 "https://www.nic.funet.fi/pub/mirrors/download.qt-project.org/${QT_ARCHIVE_PATH}" || \
-    wget --no-check-certificate "https://web.archive.org/web/20240930012719if_/https://qt.mirror.constant.com/${QT_ARCHIVE_PATH}" && \
+    wget --no-check-certificate --tries=1 "https://www.nic.funet.fi/pub/mirrors/download.qt-project.org/${QT_ARCHIVE_PATH}" && \
     tar -xvpf qt-everywhere-src-${QT_VERSION}.tar.xz && \
     cd qt-everywhere-src-${QT_VERSION} && \
     wget --no-check-certificate https://raw.githubusercontent.com/gulrak/filesystem/${GHCFS_COMMIT}/include/ghc/filesystem.hpp -O qtbase/src/tools/syncqt/filesystem.hpp && \
