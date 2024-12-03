@@ -23,7 +23,7 @@ ENV PATH="/opt/clang/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/clang/lib:/opt/qt6/lib"
 ENV LANG="C.UTF-8"
 
-RUN export CMAKE_VERSION="3.29.8" && \
+RUN export CMAKE_VERSION="3.31.1" && \
     wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
     tar -xvpf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
@@ -54,7 +54,7 @@ RUN export NINJA_VERSION="1.12.1" && \
     cd .. && \
     rm -rf v${NINJA_VERSION}.tar.gz ninja-${NINJA_VERSION}
 
-RUN export CLANG_VERSION="19.1.1" && \
+RUN export CLANG_VERSION="19.1.4" && \
     wget --no-check-certificate https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${CLANG_VERSION}.tar.gz && \
     tar -xvpf llvmorg-${CLANG_VERSION}.tar.gz && \
     cd llvm-project-llvmorg-${CLANG_VERSION} && \
@@ -71,6 +71,7 @@ RUN export CLANG_VERSION="19.1.1" && \
             -DLLVM_INCLUDE_DOCS=OFF \
             -DLLVM_ENABLE_PER_TARGET_RUNTIME_DIR=OFF \
             -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
+            -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
             -DCMAKE_INSTALL_PREFIX="/opt/clang" && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
         cmake --build build --target all && \
@@ -88,6 +89,7 @@ RUN export CLANG_VERSION="19.1.1" && \
             -DLLVM_INCLUDE_DOCS=OFF \
             -DLLVM_ENABLE_PER_TARGET_RUNTIME_DIR=OFF \
             -DLIBCXX_INCLUDE_BENCHMARKS=OFF \
+            -DLIBCXXABI_USE_LLVM_UNWINDER=ON \
             -DCMAKE_INSTALL_PREFIX="/opt/clang" && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
         cmake --build build_runtimes --target cxx cxxabi unwind && \
@@ -198,10 +200,10 @@ RUN export XCB_PROTO_VERSION="1.17.0" && \
     cd .. && \
     rm -rf xcb-proto-${XCB_PROTO_VERSION}.tar.xz xcb-proto-${XCB_PROTO_VERSION} libxcb-${LIBXCB_VERSION}.tar.xz libxcb-${LIBXCB_VERSION} xcb-util-${XCB_UTIL_VERSION}.tar.xz xcb-util-${XCB_UTIL_VERSION} xcb-util-image-${XCB_UTIL_IMAGE_VERSION}.tar.xz xcb-util-image-${XCB_UTIL_IMAGE_VERSION} xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION}.tar.xz xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION} xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION}.tar.xz xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION} xcb-util-wm-${XCB_UTIL_WM_VERSION}.tar.xz xcb-util-wm-${XCB_UTIL_WM_VERSION} xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION}.tar.xz xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION} xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}.tar.xz xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}
 
-RUN export OPENSSL_VERSION="3.3.2" && \
-    export OPENSSL_DEBIAN_VERSION="3.3.2-1" && \
+RUN export OPENSSL_VERSION="3.4.0" && \
+    export OPENSSL_DEBIAN_VERSION="3.4.0-1" && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
-    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20240904T030014Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
+    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20241023T204340Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     tar -xvpf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar -xvpf openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     cd openssl-${OPENSSL_VERSION} && \
@@ -217,7 +219,7 @@ RUN export OPENSSL_VERSION="3.3.2" && \
     cd .. && \
     rm -rf openssl-${OPENSSL_VERSION}.tar.gz openssl-${OPENSSL_VERSION} openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz debian
 
-RUN export QT_VERSION="6.8.0" && \
+RUN export QT_VERSION="6.8.1" && \
     export GHCFS_COMMIT="b1982f06c84f08a99fb90bac43c2d03712efe921" && \
     export QT_ARCHIVE_PATH="archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
     wget --no-check-certificate --tries=1 "https://download.qt.io/${QT_ARCHIVE_PATH}" || \
@@ -255,7 +257,7 @@ RUN export QT_VERSION="6.8.0" && \
             -gif -ico -qt-libpng -qt-libjpeg \
             -no-sql-db2 -no-sql-ibase -no-sql-mysql -no-sql-oci -no-sql-odbc -no-sql-psql -sql-sqlite -qt-sqlite \
             -qt-tiff -qt-webp \
-            -pulseaudio -gstreamer yes \
+            -pulseaudio -gstreamer no \
             -- -Wno-dev -DOpenGL_GL_PREFERENCE=LEGACY \
             -DQT_FEATURE_optimize_full=ON -DQT_FEATURE_clangcpp=OFF -DQT_FEATURE_clang=OFF -DQT_FEATURE_ffmpeg=OFF \
             -DCMAKE_PREFIX_PATH="/opt/openssl;/opt/xcb" -DQT_FEATURE_openssl_linked=ON -DQT_FEATURE_xkbcommon_x11=ON -DTEST_xcb_syslibs=ON \
@@ -343,7 +345,7 @@ RUN export QGNOMEPLATFORM_COMMIT="d86d6baab74c3e69094083715ffef4aef2e516dd" && \
     cd .. && \
     rm -rf ${QGNOMEPLATFORM_COMMIT}.tar.gz QGnomePlatform-${QGNOMEPLATFORM_COMMIT}
 
-RUN export QADWAITA_DECORATIONS_COMMIT="f40f31dadc074bd989db6dd90e52eecf33c4567b" && \
+RUN export QADWAITA_DECORATIONS_COMMIT="d70c24a745e2f2195222400f901cb3a9296f28b5" && \
     wget --no-check-certificate https://github.com/FedoraQt/QAdwaitaDecorations/archive/${QADWAITA_DECORATIONS_COMMIT}.tar.gz && \
     tar -xvpf ${QADWAITA_DECORATIONS_COMMIT}.tar.gz && \
     cd QAdwaitaDecorations-${QADWAITA_DECORATIONS_COMMIT} && \
