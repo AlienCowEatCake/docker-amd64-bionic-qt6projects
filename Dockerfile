@@ -240,6 +240,9 @@ RUN export QT_VERSION="6.8.1" && \
     cd qtquick3d/src/3rdparty/embree && \
     wget --no-check-certificate https://github.com/RenderKit/embree/commit/cda4cf1919bb2a748e78915fbd6e421a1056638d.diff -O - | patch -p1 && \
     cd ../../../.. && \
+    cd qtbase && \
+    wget --no-check-certificate https://github.com/qt/qtbase/commit/168f4aee268186f12f081ba962c6a25521556018.diff -O - | patch -p1 --no-backup-if-mismatch -R && \
+    cd .. && \
     mkdir build && \
     cd build && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
