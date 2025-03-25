@@ -11,7 +11,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         "^libxcb.*-dev" libxkbcommon-dev libxkbcommon-x11-dev libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev \
         libdbus-1-dev libglib2.0-dev libfreetype6-dev libcups2-dev mesa-common-dev libgl1-mesa-dev libegl1-mesa-dev \
         libxcursor-dev libxcomposite-dev libxdamage-dev libxrandr-dev libfontconfig1-dev libxss-dev libxtst-dev \
-        libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev libgstreamer-plugins-bad1.0-dev \
         libpulse-dev libasound2-dev libva-dev libopenal-dev libbluetooth-dev libspeechd-dev \
         libgtk-3-dev libgtk2.0-dev gperf bison ruby flex yasm libwayland-dev libwayland-egl-backend-dev \
         flite1-dev libvulkan-dev gcc-8 g++-8 && \
@@ -23,7 +22,7 @@ ENV PATH="/opt/clang/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/clang/lib:/opt/qt6/lib"
 ENV LANG="C.UTF-8"
 
-RUN export CMAKE_VERSION="3.31.1" && \
+RUN export CMAKE_VERSION="3.31.6" && \
     wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
     tar -xvpf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
@@ -54,7 +53,7 @@ RUN export NINJA_VERSION="1.12.1" && \
     cd .. && \
     rm -rf v${NINJA_VERSION}.tar.gz ninja-${NINJA_VERSION}
 
-RUN export CLANG_VERSION="19.1.4" && \
+RUN export CLANG_VERSION="20.1.1" && \
     wget --no-check-certificate https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${CLANG_VERSION}.tar.gz && \
     tar -xvpf llvmorg-${CLANG_VERSION}.tar.gz && \
     cd llvm-project-llvmorg-${CLANG_VERSION} && \
@@ -200,10 +199,10 @@ RUN export XCB_PROTO_VERSION="1.17.0" && \
     cd .. && \
     rm -rf xcb-proto-${XCB_PROTO_VERSION}.tar.xz xcb-proto-${XCB_PROTO_VERSION} libxcb-${LIBXCB_VERSION}.tar.xz libxcb-${LIBXCB_VERSION} xcb-util-${XCB_UTIL_VERSION}.tar.xz xcb-util-${XCB_UTIL_VERSION} xcb-util-image-${XCB_UTIL_IMAGE_VERSION}.tar.xz xcb-util-image-${XCB_UTIL_IMAGE_VERSION} xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION}.tar.xz xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION} xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION}.tar.xz xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION} xcb-util-wm-${XCB_UTIL_WM_VERSION}.tar.xz xcb-util-wm-${XCB_UTIL_WM_VERSION} xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION}.tar.xz xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION} xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}.tar.xz xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}
 
-RUN export OPENSSL_VERSION="3.4.0" && \
-    export OPENSSL_DEBIAN_VERSION="3.4.0-1" && \
+RUN export OPENSSL_VERSION="3.4.1" && \
+    export OPENSSL_DEBIAN_VERSION="3.4.1-1" && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
-    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20241023T204340Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
+    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20250212T030209Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     tar -xvpf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar -xvpf openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     cd openssl-${OPENSSL_VERSION} && \
@@ -219,8 +218,8 @@ RUN export OPENSSL_VERSION="3.4.0" && \
     cd .. && \
     rm -rf openssl-${OPENSSL_VERSION}.tar.gz openssl-${OPENSSL_VERSION} openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz debian
 
-RUN export QT_VERSION="6.8.1" && \
-    export GHCFS_COMMIT="b1982f06c84f08a99fb90bac43c2d03712efe921" && \
+RUN export QT_VERSION="6.8.2" && \
+    export GHCFS_COMMIT="9fda7b0afbd0640f482f4aea8720a8c0afd18740" && \
     export QT_ARCHIVE_PATH="archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
     wget --no-check-certificate --tries=1 "https://download.qt.io/${QT_ARCHIVE_PATH}" || \
     wget --no-check-certificate --tries=1 "https://qt-mirror.dannhauer.de/${QT_ARCHIVE_PATH}" || \
@@ -237,12 +236,6 @@ RUN export QT_VERSION="6.8.1" && \
     sed -i 's|\(#include FT_MULTIPLE_MASTERS_H\)|\1\n#if (FREETYPE_MAJOR*10000 + FREETYPE_MINOR*100 + FREETYPE_PATCH) < 20900\nstatic inline FT_Error FT_Done_MM_Var(FT_Library library, FT_MM_Var* amaster) {\n    if (!library)\n        return FT_Err_Invalid_Library_Handle;\n    FT_Memory memory = *((FT_Memory*)library);\n    memory->free(memory, amaster);\n    return FT_Err_Ok;\n}\n#endif|' qtbase/src/gui/text/freetype/qfontengine_ft_p.h && \
     sed -i 's|VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT|VK_COLOR_SPACE_DCI_P3_LINEAR_EXT|g' qtbase/src/gui/rhi/qrhivulkan.cpp && \
     sed -i 's|\(pa_context_errno(\)\(context\)|\1const_cast<pa_context *>(\2)| ; s|\(pa_stream_get_context(\)\(stream\)|\1const_cast<pa_stream *>(\2)|' qtmultimedia/src/multimedia/pulseaudio/qpulsehelpers.cpp && \
-    cd qtquick3d/src/3rdparty/embree && \
-    wget --no-check-certificate https://github.com/RenderKit/embree/commit/cda4cf1919bb2a748e78915fbd6e421a1056638d.diff -O - | patch -p1 && \
-    cd ../../../.. && \
-    cd qtbase && \
-    wget --no-check-certificate https://github.com/qt/qtbase/commit/168f4aee268186f12f081ba962c6a25521556018.diff -O - | patch -p1 --no-backup-if-mismatch -R && \
-    cd .. && \
     mkdir build && \
     cd build && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
@@ -391,7 +384,7 @@ RUN export APPIMAGEKIT_VERSION="13" && \
     chmod -R 755 /opt/appimagetool && \
     ln -s /opt/appimagetool/AppRun /usr/local/bin/appimagetool )
 
-RUN export LINUXDEPLOYQT_COMMIT="b00a83d99abecf3ab70fbff6d5aad48ec3791be2" && \
+RUN export LINUXDEPLOYQT_COMMIT="04480557d24c9d0d45f1f27f9ac1b8f1387d1d26" && \
     git -c http.sslVerify=false clone https://github.com/probonopd/linuxdeployqt.git linuxdeployqt && \
     cd linuxdeployqt && \
     git checkout -f ${LINUXDEPLOYQT_COMMIT} && \
