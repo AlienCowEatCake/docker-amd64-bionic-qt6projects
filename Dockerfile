@@ -218,7 +218,7 @@ RUN export OPENSSL_VERSION="3.4.1" && \
     cd .. && \
     rm -rf openssl-${OPENSSL_VERSION}.tar.gz openssl-${OPENSSL_VERSION} openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz debian
 
-RUN export QT_VERSION="6.8.2" && \
+RUN export QT_VERSION="6.8.3" && \
     export GHCFS_COMMIT="9fda7b0afbd0640f482f4aea8720a8c0afd18740" && \
     export QT_ARCHIVE_PATH="archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
     wget --no-check-certificate --tries=1 "https://download.qt.io/${QT_ARCHIVE_PATH}" || \
@@ -236,6 +236,7 @@ RUN export QT_VERSION="6.8.2" && \
     sed -i 's|\(#include FT_MULTIPLE_MASTERS_H\)|\1\n#if (FREETYPE_MAJOR*10000 + FREETYPE_MINOR*100 + FREETYPE_PATCH) < 20900\nstatic inline FT_Error FT_Done_MM_Var(FT_Library library, FT_MM_Var* amaster) {\n    if (!library)\n        return FT_Err_Invalid_Library_Handle;\n    FT_Memory memory = *((FT_Memory*)library);\n    memory->free(memory, amaster);\n    return FT_Err_Ok;\n}\n#endif|' qtbase/src/gui/text/freetype/qfontengine_ft_p.h && \
     sed -i 's|VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT|VK_COLOR_SPACE_DCI_P3_LINEAR_EXT|g' qtbase/src/gui/rhi/qrhivulkan.cpp && \
     sed -i 's|\(pa_context_errno(\)\(context\)|\1const_cast<pa_context *>(\2)| ; s|\(pa_stream_get_context(\)\(stream\)|\1const_cast<pa_stream *>(\2)|' qtmultimedia/src/multimedia/pulseaudio/qpulsehelpers.cpp && \
+    sed -i 's|\(QSpan{[^}]*, \)len\( }\)|\1static_cast<qsizetype>(len)\2|g' qtmultimedia/src/multimedia/pulseaudio/qpulseaudiosink.cpp && \
     mkdir build && \
     cd build && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
