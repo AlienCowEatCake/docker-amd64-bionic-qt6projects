@@ -237,6 +237,9 @@ RUN export QT_VERSION="6.8.3" && \
     sed -i 's|VK_COLOR_SPACE_DISPLAY_P3_LINEAR_EXT|VK_COLOR_SPACE_DCI_P3_LINEAR_EXT|g' qtbase/src/gui/rhi/qrhivulkan.cpp && \
     sed -i 's|\(pa_context_errno(\)\(context\)|\1const_cast<pa_context *>(\2)| ; s|\(pa_stream_get_context(\)\(stream\)|\1const_cast<pa_stream *>(\2)|' qtmultimedia/src/multimedia/pulseaudio/qpulsehelpers.cpp && \
     sed -i 's|\(QSpan{[^}]*, \)len\( }\)|\1static_cast<qsizetype>(len)\2|g' qtmultimedia/src/multimedia/pulseaudio/qpulseaudiosink.cpp && \
+    cd qtbase && \
+    wget --no-check-certificate https://github.com/qt/qtbase/commit/30d2cc9f2ebf42af5982962c4f50ffb124189e54.diff -O - | patch -p1 && \
+    cd .. && \
     mkdir build && \
     cd build && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
