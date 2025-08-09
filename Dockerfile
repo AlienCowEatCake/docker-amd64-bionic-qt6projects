@@ -22,7 +22,7 @@ ENV PATH="/opt/clang/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/clang/lib:/opt/qt6/lib"
 ENV LANG="C.UTF-8"
 
-RUN export CMAKE_VERSION="3.31.6" && \
+RUN export CMAKE_VERSION="3.31.8" && \
     wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
     tar -xvpf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
@@ -38,7 +38,7 @@ RUN export CMAKE_VERSION="3.31.6" && \
     cd .. && \
     rm -rf cmake-${CMAKE_VERSION}.tar.gz cmake-${CMAKE_VERSION}
 
-RUN export NINJA_VERSION="1.12.1" && \
+RUN export NINJA_VERSION="1.13.1" && \
     wget --no-check-certificate https://github.com/ninja-build/ninja/archive/refs/tags/v${NINJA_VERSION}.tar.gz && \
     tar -xvpf v${NINJA_VERSION}.tar.gz && \
     cd ninja-${NINJA_VERSION} && \
@@ -53,7 +53,7 @@ RUN export NINJA_VERSION="1.12.1" && \
     cd .. && \
     rm -rf v${NINJA_VERSION}.tar.gz ninja-${NINJA_VERSION}
 
-RUN export CLANG_VERSION="20.1.1" && \
+RUN export CLANG_VERSION="20.1.8" && \
     wget --no-check-certificate https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-${CLANG_VERSION}.tar.gz && \
     tar -xvpf llvmorg-${CLANG_VERSION}.tar.gz && \
     cd llvm-project-llvmorg-${CLANG_VERSION} && \
@@ -199,10 +199,10 @@ RUN export XCB_PROTO_VERSION="1.17.0" && \
     cd .. && \
     rm -rf xcb-proto-${XCB_PROTO_VERSION}.tar.xz xcb-proto-${XCB_PROTO_VERSION} libxcb-${LIBXCB_VERSION}.tar.xz libxcb-${LIBXCB_VERSION} xcb-util-${XCB_UTIL_VERSION}.tar.xz xcb-util-${XCB_UTIL_VERSION} xcb-util-image-${XCB_UTIL_IMAGE_VERSION}.tar.xz xcb-util-image-${XCB_UTIL_IMAGE_VERSION} xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION}.tar.xz xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION} xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION}.tar.xz xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION} xcb-util-wm-${XCB_UTIL_WM_VERSION}.tar.xz xcb-util-wm-${XCB_UTIL_WM_VERSION} xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION}.tar.xz xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION} xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}.tar.xz xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}
 
-RUN export OPENSSL_VERSION="3.4.1" && \
-    export OPENSSL_DEBIAN_VERSION="3.4.1-1" && \
+RUN export OPENSSL_VERSION="3.5.1" && \
+    export OPENSSL_DEBIAN_VERSION="3.5.1-1" && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
-    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20250212T030209Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
+    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20250713T142600Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     tar -xvpf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar -xvpf openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     cd openssl-${OPENSSL_VERSION} && \
@@ -269,9 +269,9 @@ RUN export QT_VERSION="6.8.3" && \
     cd ../.. && \
     rm -rf qt-everywhere-src-${QT_VERSION}.tar.xz qt-everywhere-src-${QT_VERSION}
 
-RUN export QT6GTK2_COMMIT="b574ba5b59edf5ce220ca304e1d07d75c94d03a2" && \
-    wget --no-check-certificate https://github.com/trialuser02/qt6gtk2/archive/${QT6GTK2_COMMIT}.tar.gz && \
-    tar -xvpf ${QT6GTK2_COMMIT}.tar.gz && \
+RUN export QT6GTK2_COMMIT="b555e88ac81a765832b97b1b13878182c41be111" && \
+    wget --no-check-certificate https://www.opencode.net/trialuser/qt6gtk2/-/archive/${QT6GTK2_COMMIT}/qt6gtk2-${QT6GTK2_COMMIT}.tar.gz && \
+    tar -xvpf qt6gtk2-${QT6GTK2_COMMIT}.tar.gz && \
     cd qt6gtk2-${QT6GTK2_COMMIT} && \
     mkdir build && \
     cd build && \
@@ -282,11 +282,11 @@ RUN export QT6GTK2_COMMIT="b574ba5b59edf5ce220ca304e1d07d75c94d03a2" && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
         make install && \
     cd ../.. && \
-    rm -rf ${QT6GTK2_COMMIT}.tar.gz qt6gtk2-${QT6GTK2_COMMIT}
+    rm -rf qt6gtk2-${QT6GTK2_COMMIT}.tar.gz qt6gtk2-${QT6GTK2_COMMIT}
 
-RUN export QT6CT_COMMIT="55dba8704c0a748b0ce9f2d3cc2cf200ca3db464" && \
-    wget --no-check-certificate https://github.com/trialuser02/qt6ct/archive/${QT6CT_COMMIT}.tar.gz && \
-    tar -xvpf ${QT6CT_COMMIT}.tar.gz && \
+RUN export QT6CT_COMMIT="23a985f45cf793ce7ce05811411d2374b4f979c4" && \
+    wget --no-check-certificate https://www.opencode.net/trialuser/qt6ct/-/archive/${QT6CT_COMMIT}/qt6ct-${QT6CT_COMMIT}.tar.gz && \
+    tar -xvpf qt6ct-${QT6CT_COMMIT}.tar.gz && \
     cd qt6ct-${QT6CT_COMMIT} && \
     mkdir build && \
     cd build && \
@@ -297,7 +297,7 @@ RUN export QT6CT_COMMIT="55dba8704c0a748b0ce9f2d3cc2cf200ca3db464" && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
         make install && \
     cd ../.. && \
-    rm -rf ${QT6CT_COMMIT}.tar.gz qt6ct-${QT6CT_COMMIT}
+    rm -rf qt6ct-${QT6CT_COMMIT}.tar.gz qt6ct-${QT6CT_COMMIT}
 
 RUN export ADWAITA_QT_COMMIT="0a774368916def5c9889de50f3323dec11de781e" && \
     wget --no-check-certificate https://github.com/FedoraQt/adwaita-qt/archive/${ADWAITA_QT_COMMIT}.tar.gz && \
@@ -305,7 +305,7 @@ RUN export ADWAITA_QT_COMMIT="0a774368916def5c9889de50f3323dec11de781e" && \
     cd adwaita-qt-${ADWAITA_QT_COMMIT} && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
         cmake -S . -B build \
-        -G "Ninja" \
+            -G "Ninja" \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=/opt/qt6 \
             -DCMAKE_INSTALL_PREFIX=/opt/qt6 \
@@ -351,7 +351,7 @@ RUN export QADWAITA_DECORATIONS_COMMIT="d70c24a745e2f2195222400f901cb3a9296f28b5
     cd QAdwaitaDecorations-${QADWAITA_DECORATIONS_COMMIT} && \
     setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
         cmake -S . -B build \
-        -G "Ninja" \
+            -G "Ninja" \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=/opt/qt6 \
             -DCMAKE_INSTALL_PREFIX=/opt/qt6 \
@@ -368,27 +368,27 @@ RUN export QADWAITA_DECORATIONS_COMMIT="d70c24a745e2f2195222400f901cb3a9296f28b5
     cd .. && \
     rm -rf ${QADWAITA_DECORATIONS_COMMIT}.tar.gz QAdwaitaDecorations-${QADWAITA_DECORATIONS_COMMIT}
 
-# @todo Build AppImageKit from source?
-RUN export APPIMAGEKIT_VERSION="13" && \
-    export P7ZIP_VERSION="16.02" && \
+# @todo Build appimagetool and type2-runtime from source?
+RUN export APPIMAGETOOL_VERSION="continuous" && \
+    export TYPE2_RUNTIME_VERSION="continuous" && \
+    export IP7ZIP_VERSION="2501" && \
     echo "|i686|x86_64|arm|aarch64|" | grep -v "|$(gcc -dumpmachine | sed 's|-.*||')|" >/dev/null || ( \
-    wget --no-check-certificate https://sourceforge.net/projects/p7zip/files/p7zip/${P7ZIP_VERSION}/p7zip_${P7ZIP_VERSION}_src_all.tar.bz2/download -O p7zip_${P7ZIP_VERSION}_src_all.tar.bz2 && \
-    tar -xvpf p7zip_${P7ZIP_VERSION}_src_all.tar.bz2 && \
-    cd p7zip_${P7ZIP_VERSION} && \
-    setarch "$(gcc -dumpmachine | sed 's|-.*||')" \
-        make -j$(getconf _NPROCESSORS_ONLN) 7z && \
-    cd .. && \
-    wget --no-check-certificate https://github.com/AppImage/AppImageKit/releases/download/${APPIMAGEKIT_VERSION}/appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage -O appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage && \
+    wget --no-check-certificate https://7-zip.org/a/7z${IP7ZIP_VERSION}-linux-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^i686$|x86| ; s|^x86_64$|x64| ; s|^aarch64$|arm64|').tar.xz -O 7z${IP7ZIP_VERSION}-linux.tar.xz && \
+    mkdir -p 7z${IP7ZIP_VERSION}-linux && \
+    tar -xvpf 7z${IP7ZIP_VERSION}-linux.tar.xz --directory=7z${IP7ZIP_VERSION}-linux && \
+    wget --no-check-certificate https://github.com/AppImage/appimagetool/releases/download/${APPIMAGETOOL_VERSION}/appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage -O appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage && \
     mkdir squashfs-root && \
     cd squashfs-root && \
-    ../p7zip_${P7ZIP_VERSION}/bin/7z x ../appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage && \
+    ../7z${IP7ZIP_VERSION}-linux/7zzs x ../appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage && \
     cd .. && \
-    rm -rf appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage p7zip_${P7ZIP_VERSION}_src_all.tar.bz2 p7zip_${P7ZIP_VERSION} && \
+    rm -rf appimagetool-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|').AppImage 7z${IP7ZIP_VERSION}-linux.tar.xz 7z${IP7ZIP_VERSION}-linux && \
     mv squashfs-root /opt/appimagetool && \
     chmod -R 755 /opt/appimagetool && \
-    ln -s /opt/appimagetool/AppRun /usr/local/bin/appimagetool )
+    wget --no-check-certificate https://github.com/AppImage/type2-runtime/releases/download/${TYPE2_RUNTIME_VERSION}/runtime-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|') -O /opt/runtime-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|') && \
+    echo "#!/bin/sh -e\n/opt/appimagetool/AppRun --runtime-file /opt/runtime-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|') \"\${@}\"" > /usr/local/bin/appimagetool && \
+    chmod 755 /opt/runtime-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|') /usr/local/bin/appimagetool )
 
-RUN export LINUXDEPLOYQT_COMMIT="04480557d24c9d0d45f1f27f9ac1b8f1387d1d26" && \
+RUN export LINUXDEPLOYQT_COMMIT="0393b8487bdb552738bc8f89114959f025ef68c3" && \
     git -c http.sslVerify=false clone https://github.com/probonopd/linuxdeployqt.git linuxdeployqt && \
     cd linuxdeployqt && \
     git checkout -f ${LINUXDEPLOYQT_COMMIT} && \
