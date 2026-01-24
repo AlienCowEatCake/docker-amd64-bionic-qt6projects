@@ -22,7 +22,7 @@ ENV PATH="/opt/clang/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/clang/lib:/opt/qt6/lib"
 ENV LANG="C.UTF-8"
 
-RUN export CMAKE_VERSION="3.31.8" && \
+RUN export CMAKE_VERSION="3.31.10" && \
     wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
     tar -xvpf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
@@ -38,7 +38,7 @@ RUN export CMAKE_VERSION="3.31.8" && \
     cd .. && \
     rm -rf cmake-${CMAKE_VERSION}.tar.gz cmake-${CMAKE_VERSION}
 
-RUN export NINJA_VERSION="1.13.1" && \
+RUN export NINJA_VERSION="1.13.2" && \
     wget --no-check-certificate https://github.com/ninja-build/ninja/archive/refs/tags/v${NINJA_VERSION}.tar.gz && \
     tar -xvpf v${NINJA_VERSION}.tar.gz && \
     cd ninja-${NINJA_VERSION} && \
@@ -104,7 +104,7 @@ RUN export XCB_PROTO_VERSION="1.17.0" && \
     export XCB_UTIL_KEYSYMS_VERSION="0.4.1" && \
     export XCB_UTIL_RENDERUTIL_VERSION="0.3.10" && \
     export XCB_UTIL_WM_VERSION="0.4.2" && \
-    export XCB_UTIL_CURSOR_VERSION="0.1.5" && \
+    export XCB_UTIL_CURSOR_VERSION="0.1.6" && \
     export XCB_UTIL_ERRORS_VERSION="1.0.1" && \
     wget --no-check-certificate https://xorg.freedesktop.org/archive/individual/proto/xcb-proto-${XCB_PROTO_VERSION}.tar.xz && \
     tar -xvpf xcb-proto-${XCB_PROTO_VERSION}.tar.xz && \
@@ -199,10 +199,10 @@ RUN export XCB_PROTO_VERSION="1.17.0" && \
     cd .. && \
     rm -rf xcb-proto-${XCB_PROTO_VERSION}.tar.xz xcb-proto-${XCB_PROTO_VERSION} libxcb-${LIBXCB_VERSION}.tar.xz libxcb-${LIBXCB_VERSION} xcb-util-${XCB_UTIL_VERSION}.tar.xz xcb-util-${XCB_UTIL_VERSION} xcb-util-image-${XCB_UTIL_IMAGE_VERSION}.tar.xz xcb-util-image-${XCB_UTIL_IMAGE_VERSION} xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION}.tar.xz xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION} xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION}.tar.xz xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION} xcb-util-wm-${XCB_UTIL_WM_VERSION}.tar.xz xcb-util-wm-${XCB_UTIL_WM_VERSION} xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION}.tar.xz xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION} xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}.tar.xz xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}
 
-RUN export OPENSSL_VERSION="3.5.1" && \
-    export OPENSSL_DEBIAN_VERSION="3.5.1-1" && \
+RUN export OPENSSL_VERSION="3.5.4" && \
+    export OPENSSL_DEBIAN_VERSION="3.5.4-1~deb13u1" && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
-    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20250713T142600Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
+    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20251102T143743Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     tar -xvpf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar -xvpf openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     cd openssl-${OPENSSL_VERSION} && \
@@ -222,9 +222,9 @@ RUN export QT_VERSION="6.8.3" && \
     export GHCFS_COMMIT="9fda7b0afbd0640f482f4aea8720a8c0afd18740" && \
     export QT_ARCHIVE_PATH="archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
     wget --no-check-certificate --tries=1 "https://download.qt.io/${QT_ARCHIVE_PATH}" || \
-    wget --no-check-certificate --tries=1 "https://qt-mirror.dannhauer.de/${QT_ARCHIVE_PATH}" || \
     wget --no-check-certificate --tries=1 "https://mirror.accum.se/mirror/qt.io/qtproject/${QT_ARCHIVE_PATH}" || \
-    wget --no-check-certificate --tries=1 "https://www.nic.funet.fi/pub/mirrors/download.qt-project.org/${QT_ARCHIVE_PATH}" && \
+    wget --no-check-certificate --tries=1 "https://www.nic.funet.fi/pub/mirrors/download.qt-project.org/${QT_ARCHIVE_PATH}" || \
+    wget --no-check-certificate --tries=1 "https://qt-mirror.dannhauer.de/${QT_ARCHIVE_PATH}" && \
     tar -xvpf qt-everywhere-src-${QT_VERSION}.tar.xz && \
     cd qt-everywhere-src-${QT_VERSION} && \
     wget --no-check-certificate https://raw.githubusercontent.com/gulrak/filesystem/${GHCFS_COMMIT}/include/ghc/filesystem.hpp -O qtbase/src/tools/syncqt/filesystem.hpp && \
@@ -269,8 +269,8 @@ RUN export QT_VERSION="6.8.3" && \
     cd ../.. && \
     rm -rf qt-everywhere-src-${QT_VERSION}.tar.xz qt-everywhere-src-${QT_VERSION}
 
-RUN export QT6GTK2_COMMIT="b555e88ac81a765832b97b1b13878182c41be111" && \
-    wget --no-check-certificate https://www.opencode.net/trialuser/qt6gtk2/-/archive/${QT6GTK2_COMMIT}/qt6gtk2-${QT6GTK2_COMMIT}.tar.gz && \
+RUN export QT6GTK2_COMMIT="38ce539b2452f0799fc6940288dbae6a4f2f0337" && \
+    wget --continue --tries=20 --read-timeout=30 --no-check-certificate https://www.opencode.net/trialuser/qt6gtk2/-/archive/${QT6GTK2_COMMIT}/qt6gtk2-${QT6GTK2_COMMIT}.tar.gz && \
     tar -xvpf qt6gtk2-${QT6GTK2_COMMIT}.tar.gz && \
     cd qt6gtk2-${QT6GTK2_COMMIT} && \
     mkdir build && \
@@ -284,8 +284,8 @@ RUN export QT6GTK2_COMMIT="b555e88ac81a765832b97b1b13878182c41be111" && \
     cd ../.. && \
     rm -rf qt6gtk2-${QT6GTK2_COMMIT}.tar.gz qt6gtk2-${QT6GTK2_COMMIT}
 
-RUN export QT6CT_COMMIT="23a985f45cf793ce7ce05811411d2374b4f979c4" && \
-    wget --no-check-certificate https://www.opencode.net/trialuser/qt6ct/-/archive/${QT6CT_COMMIT}/qt6ct-${QT6CT_COMMIT}.tar.gz && \
+RUN export QT6CT_COMMIT="00823e41aa60e8fe266d5aee328e82ad1ad94348" && \
+    wget --continue --tries=20 --read-timeout=30 --no-check-certificate https://www.opencode.net/trialuser/qt6ct/-/archive/${QT6CT_COMMIT}/qt6ct-${QT6CT_COMMIT}.tar.gz && \
     tar -xvpf qt6ct-${QT6CT_COMMIT}.tar.gz && \
     cd qt6ct-${QT6CT_COMMIT} && \
     mkdir build && \
@@ -345,7 +345,7 @@ RUN export QGNOMEPLATFORM_COMMIT="d86d6baab74c3e69094083715ffef4aef2e516dd" && \
     cd .. && \
     rm -rf ${QGNOMEPLATFORM_COMMIT}.tar.gz QGnomePlatform-${QGNOMEPLATFORM_COMMIT}
 
-RUN export QADWAITA_DECORATIONS_COMMIT="d70c24a745e2f2195222400f901cb3a9296f28b5" && \
+RUN export QADWAITA_DECORATIONS_COMMIT="22a97da98a8d91021c63600250711adf4ccf11d7" && \
     wget --no-check-certificate https://github.com/FedoraQt/QAdwaitaDecorations/archive/${QADWAITA_DECORATIONS_COMMIT}.tar.gz && \
     tar -xvpf ${QADWAITA_DECORATIONS_COMMIT}.tar.gz && \
     cd QAdwaitaDecorations-${QADWAITA_DECORATIONS_COMMIT} && \
@@ -388,7 +388,7 @@ RUN export APPIMAGETOOL_VERSION="continuous" && \
     echo "#!/bin/sh -e\n/opt/appimagetool/AppRun --runtime-file /opt/runtime-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|') \"\${@}\"" > /usr/local/bin/appimagetool && \
     chmod 755 /opt/runtime-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^arm$|armhf|') /usr/local/bin/appimagetool )
 
-RUN export LINUXDEPLOYQT_COMMIT="0393b8487bdb552738bc8f89114959f025ef68c3" && \
+RUN export LINUXDEPLOYQT_COMMIT="7e7a01d565dde3c5e116c9369026c27a2903bb9d" && \
     git -c http.sslVerify=false clone https://github.com/probonopd/linuxdeployqt.git linuxdeployqt && \
     cd linuxdeployqt && \
     git checkout -f ${LINUXDEPLOYQT_COMMIT} && \
