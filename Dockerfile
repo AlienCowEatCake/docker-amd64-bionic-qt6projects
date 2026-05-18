@@ -22,7 +22,7 @@ ENV PATH="/opt/clang/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/opt/clang/lib:/opt/qt6/lib"
 ENV LANG="C.UTF-8"
 
-RUN export CMAKE_VERSION="3.31.10" && \
+RUN export CMAKE_VERSION="3.31.12" && \
     wget --no-check-certificate https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION}/cmake-${CMAKE_VERSION}.tar.gz && \
     tar -xvpf cmake-${CMAKE_VERSION}.tar.gz && \
     cd cmake-${CMAKE_VERSION} && \
@@ -199,10 +199,10 @@ RUN export XCB_PROTO_VERSION="1.17.0" && \
     cd .. && \
     rm -rf xcb-proto-${XCB_PROTO_VERSION}.tar.xz xcb-proto-${XCB_PROTO_VERSION} libxcb-${LIBXCB_VERSION}.tar.xz libxcb-${LIBXCB_VERSION} xcb-util-${XCB_UTIL_VERSION}.tar.xz xcb-util-${XCB_UTIL_VERSION} xcb-util-image-${XCB_UTIL_IMAGE_VERSION}.tar.xz xcb-util-image-${XCB_UTIL_IMAGE_VERSION} xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION}.tar.xz xcb-util-keysyms-${XCB_UTIL_KEYSYMS_VERSION} xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION}.tar.xz xcb-util-renderutil-${XCB_UTIL_RENDERUTIL_VERSION} xcb-util-wm-${XCB_UTIL_WM_VERSION}.tar.xz xcb-util-wm-${XCB_UTIL_WM_VERSION} xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION}.tar.xz xcb-util-cursor-${XCB_UTIL_CURSOR_VERSION} xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}.tar.xz xcb-util-errors-${XCB_UTIL_ERRORS_VERSION}
 
-RUN export OPENSSL_VERSION="3.5.4" && \
-    export OPENSSL_DEBIAN_VERSION="3.5.4-1~deb13u1" && \
+RUN export OPENSSL_VERSION="3.5.6" && \
+    export OPENSSL_DEBIAN_VERSION="3.5.6-1~deb13u1" && \
     wget --no-check-certificate https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz && \
-    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20251102T143743Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
+    wget --no-check-certificate https://snapshot.debian.org/archive/debian/20260506T023405Z/pool/main/o/openssl/openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     tar -xvpf openssl-${OPENSSL_VERSION}.tar.gz && \
     tar -xvpf openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz && \
     cd openssl-${OPENSSL_VERSION} && \
@@ -219,7 +219,7 @@ RUN export OPENSSL_VERSION="3.5.4" && \
     rm -rf openssl-${OPENSSL_VERSION}.tar.gz openssl-${OPENSSL_VERSION} openssl_${OPENSSL_DEBIAN_VERSION}.debian.tar.xz debian
 
 RUN export QT_VERSION="6.8.3" && \
-    export GHCFS_COMMIT="9fda7b0afbd0640f482f4aea8720a8c0afd18740" && \
+    export GHCFS_COMMIT="0e72911ba0f37f3eb883b181b855a5f4eb046ca1" && \
     export QT_ARCHIVE_PATH="archive/qt/$(echo ${QT_VERSION} | sed 's|\([0-9]*\.[0-9]*\)\..*|\1|')/${QT_VERSION}/single/qt-everywhere-src-${QT_VERSION}.tar.xz" && \
     wget --no-check-certificate --tries=1 "https://download.qt.io/${QT_ARCHIVE_PATH}" || \
     wget --no-check-certificate --tries=1 "https://mirror.accum.se/mirror/qt.io/qtproject/${QT_ARCHIVE_PATH}" || \
@@ -270,7 +270,7 @@ RUN export QT_VERSION="6.8.3" && \
     rm -rf qt-everywhere-src-${QT_VERSION}.tar.xz qt-everywhere-src-${QT_VERSION}
 
 RUN export QT6GTK2_COMMIT="38ce539b2452f0799fc6940288dbae6a4f2f0337" && \
-    wget --continue --tries=20 --read-timeout=30 --no-check-certificate https://www.opencode.net/trialuser/qt6gtk2/-/archive/${QT6GTK2_COMMIT}/qt6gtk2-${QT6GTK2_COMMIT}.tar.gz && \
+    wget --no-check-certificate -O qt6gtk2-${QT6GTK2_COMMIT}.tar.gz https://github.com/AlienCowEatCake/qt6gtk2/archive/${QT6GTK2_COMMIT}.tar.gz && \
     tar -xvpf qt6gtk2-${QT6GTK2_COMMIT}.tar.gz && \
     cd qt6gtk2-${QT6GTK2_COMMIT} && \
     mkdir build && \
@@ -285,7 +285,7 @@ RUN export QT6GTK2_COMMIT="38ce539b2452f0799fc6940288dbae6a4f2f0337" && \
     rm -rf qt6gtk2-${QT6GTK2_COMMIT}.tar.gz qt6gtk2-${QT6GTK2_COMMIT}
 
 RUN export QT6CT_COMMIT="00823e41aa60e8fe266d5aee328e82ad1ad94348" && \
-    wget --continue --tries=20 --read-timeout=30 --no-check-certificate https://www.opencode.net/trialuser/qt6ct/-/archive/${QT6CT_COMMIT}/qt6ct-${QT6CT_COMMIT}.tar.gz && \
+    wget --no-check-certificate -O qt6ct-${QT6CT_COMMIT}.tar.gz https://github.com/AlienCowEatCake/qt6ct/archive/${QT6CT_COMMIT}.tar.gz && \
     tar -xvpf qt6ct-${QT6CT_COMMIT}.tar.gz && \
     cd qt6ct-${QT6CT_COMMIT} && \
     mkdir build && \
@@ -371,7 +371,7 @@ RUN export QADWAITA_DECORATIONS_COMMIT="22a97da98a8d91021c63600250711adf4ccf11d7
 # @todo Build appimagetool and type2-runtime from source?
 RUN export APPIMAGETOOL_VERSION="continuous" && \
     export TYPE2_RUNTIME_VERSION="continuous" && \
-    export IP7ZIP_VERSION="2501" && \
+    export IP7ZIP_VERSION="2601" && \
     echo "|i686|x86_64|arm|aarch64|" | grep -v "|$(gcc -dumpmachine | sed 's|-.*||')|" >/dev/null || ( \
     wget --no-check-certificate https://7-zip.org/a/7z${IP7ZIP_VERSION}-linux-$(gcc -dumpmachine | sed 's|-.*||' | sed 's|^i686$|x86| ; s|^x86_64$|x64| ; s|^aarch64$|arm64|').tar.xz -O 7z${IP7ZIP_VERSION}-linux.tar.xz && \
     mkdir -p 7z${IP7ZIP_VERSION}-linux && \
